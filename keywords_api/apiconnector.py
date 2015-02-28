@@ -1,37 +1,45 @@
+import pdb
+
 import sys
 import os
 import csv
+import argparse
 from googleads.adwords import AdWordsClient
+from keywords_api.config import SELECTOR
+
 
 
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
-YAML_FILE = WORKING_DIR + 'googleads.yaml'
+YAML_FILE = WORKING_DIR + '/googleads.yaml'
 sys.path.append(WORKING_DIR)
+
 
 class ApiConnector(object):
 
     def getIdeaService(self):
-        client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
-        service = client.GetService('TargetingIdeaService')
-        return service
-    
-    def get_ideas(self, keyweords, iterations):
-        pass # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
+        self.client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
+        self.service = self.client.GetService('TargetingIdeaService')
+        return self.service
 
+    def buildSelector(self, keyword):
+        pass
 
+    def getIdeas(self, keywords, iterations):
+        # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
+        pass
 
 
 class IdeasIterator():
-    
-    def __init__(self, results_per_request = 10,  iterations = 5, language = 'English', localtion = 'UK'):
+
+    def __init__(self, results_per_request=10, iterations=5, language='English', location='UK'):
         self.results_per_request = results_per_request
         self.iterations = iterations
         self.language = language
-        self.localtion
         self.output_path = DATA_DIR
         self.headers = None
-        
-    
+        self.localaion = location
+        self.output_path = ''
+
     def run(self, keywords):
         next_keywords = [keywords]
         for i in range(1, self.iterations+1):
@@ -40,22 +48,15 @@ class IdeasIterator():
             this_ideas = new_selector.get_ideas(keywords, self.iterations)
             next_keywords = [x['keyword'] for x in this_ideas.values()]
             self.write_in_csv(this_ideas, i)
-    
+
     def write_in_csv(self, res_dic, iteration):
         if not self.headers:
             self.headers = ['Iteration', 'SeedKeyword']
             self.headers += res_dic.keys()
             with open('names.csv', 'w') as csvfile:
                 
-          
-        
-            
-        
-            
-            
-            
 if __name__ == '__main__':
-    
+
     #arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-k', "--keyword", help="The keyword you want to start with")
@@ -64,8 +65,6 @@ if __name__ == '__main__':
     parser.add_argument("--ln", "--language", default = 'English', help="Language. If not entered it will default to English")
     parser.add_argument("--lc", "--location", default = 'UK', help="Location. If not entered it will default to UK")
     args = parser.parse_args()
-    
-    
-    
-    ideas = IdeasIterator(args.results, args.iterations, args.language, args.localtion)                   
+
+    ideas = IdeasIterator(args.results, args.iterations, args.language, args.localtion)
     ideas.run(args.keyword)
