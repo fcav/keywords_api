@@ -33,8 +33,11 @@ class IdeaSelector(object):
         return SELECTOR
 
     def getIdeas(self):
-        # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
-        pass
+        # this should return a dictionary of {[<original_keyword>]: [{'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}]}
+        page = self.service.get(self.selector)
+        ideas = page.entries
+        pdb.set_trace()
+        return ideas
 
 
 class IdeasIterator():
