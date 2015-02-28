@@ -1,7 +1,7 @@
 import pdb
 
 import unittest
-from keywords_api.apiconnector import ApiConnector
+from keywords_api.apiconnector import ApiConnector, IdeaSelector
 from keywords_api.config import SELECTOR
 
 class TestApiConnector(unittest.TestCase):
@@ -22,16 +22,21 @@ class TestIdeaSelector(unittest.TestCase):
         self.selector = SELECTOR
         self.con = ApiConnector()
         self.service = self.con.getIdeaService()
+        self.test_keywords = ['keywords', 'for', 'unittest']
+        self.idea_selector = IdeaSelector(self.service, self.test_keywords)
 
-    def test_getIdeas_returns_dict(self):
-        test_keywords = ['keywords', 'for', 'unittest']
-        self.con.getIdeaService()
-        test_page = self.service.get(self.selector)
-        pdb.set_trace()
-        #self.assertIsInstance(self.con.getIdeas(test_keywords, 1), dict)
+    def test_getIdeas_returns_list_of_entries(self):
+        self.idea_selector.buildSelector()
+        page = self.service.get(self.idea_selector.selector)
+        self.assertIsInstance(page.entries, list)
 
+    def test_getIdeas_returns_number_of_entries_asked_for(self):
+        self.idea_selector.buildSelector()
+        page = self.service.get(self.idea_selector.selector)
+        page_size_requested = self.idea_selector.selector['paging']['numberResults']
+        self.assertEquals(len(page.entries), int(page_size_requested))
 
-class TestKeywordSelector(unittest.TestCase):
+class TestIterator(unittest.TestCase):
 
     def setUp(self):
         pass

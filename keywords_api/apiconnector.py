@@ -29,13 +29,12 @@ class IdeaSelector(object):
         self.keywords = keywords
 
     def buildSelector(self):
-        pass
+        self.selector = SELECTOR
+        return SELECTOR
 
     def getIdeas(self):
         # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
         pass
-
-
 
 
 class IdeasIterator():
