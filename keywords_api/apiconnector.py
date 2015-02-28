@@ -31,9 +31,11 @@ class IdeaSelector(object):
     def buildSelector(self):
         pass
 
-    def getIdeas(self, selector, keywords, iterations):
+    def getIdeas(self):
         # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
         pass
+
+
 
 
 class IdeasIterator():
@@ -62,7 +64,7 @@ class IdeasIterator():
             self.headers += res_dic.keys()
             with open('names.csv', 'w') as csvfile:
                 pass
-                
+
 if __name__ == '__main__':
 
     #arguments
