@@ -7,9 +7,7 @@ from keywords_api.config import SELECTOR
 class TestApiConnector(unittest.TestCase):
 
     def setUp(self):
-        self.selector = SELECTOR
-        self.con = ApiConnector()
-        self.service = self.con.getIdeaService()
+        pass
 
     def test_can_get_idea_service(self):
         try:
@@ -17,6 +15,13 @@ class TestApiConnector(unittest.TestCase):
             service = con.getIdeaService()
         finally:
             self.assertIsNotNone(service)
+
+class TestIdeaSelector(unittest.TestCase):
+
+    def setUp(self):
+        self.selector = SELECTOR
+        self.con = ApiConnector()
+        self.service = self.con.getIdeaService()
 
     def test_getIdeas_returns_dict(self):
         test_keywords = ['keywords', 'for', 'unittest']
