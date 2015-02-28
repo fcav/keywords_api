@@ -2,9 +2,11 @@ import pdb
 
 import sys
 import os
+import csv
 import argparse
 from googleads.adwords import AdWordsClient
 from keywords_api.config import SELECTOR
+
 
 
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -33,9 +35,10 @@ class IdeasIterator():
         self.results_per_request = results_per_request
         self.iterations = iterations
         self.language = language
+        self.output_path = DATA_DIR
+        self.headers = None
         self.localaion = location
         self.output_path = ''
-
 
     def run(self, keywords):
         next_keywords = [keywords]
@@ -47,10 +50,11 @@ class IdeasIterator():
             self.write_in_csv(this_ideas, i)
 
     def write_in_csv(self, res_dic, iteration):
-        pass
-
-
-
+        if not self.headers:
+            self.headers = ['Iteration', 'SeedKeyword']
+            self.headers += res_dic.keys()
+            with open('names.csv', 'w') as csvfile:
+                
 if __name__ == '__main__':
 
     #arguments
