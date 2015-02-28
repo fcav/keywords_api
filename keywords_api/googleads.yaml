@@ -1,0 +1,34 @@
+adwords:
+  developer_token: WDCTOMSIzftb1Xy73xS7dg
+  user_agent: INSERT_USER_AGENT_HERE
+  client_id: 582590843387-m2n9u1up37o82h2agpiaoro62454ne9h.apps.googleusercontent.com
+  client_secret: 7JeL7zqPMqtJHSNhLLIGAHRU
+  refresh_token: 1/1kYJ-TLBD-DQJ2h0a7Bzlunk_rWDNUR03nDmVaOpqYs
+# The following values are optional:
+  client_customer_id: 227-114-6016
+#  partial_failure: True
+#  validate_only: True
+
+dfp:
+  application_name: INSERT_APPLICATION_NAME_HERE
+  client_id: INSERT_OAUTH_2_CLIENT_ID_HERE
+  client_secret: INSERT_CLIENT_SECRET_HERE
+  refresh_token: INSERT_REFRESH_TOKEN_HERE
+# The following values are optional:
+#  network_code: INSERT_NETWORK_CODE_HERE
+
+dfa:
+  username: INSERT_DFA_USERNAME_HERE
+  application_name: INSERT_APPLICATION_NAME_HERE
+  client_id: INSERT_OAUTH_2_CLIENT_ID_HERE
+  client_secret: INSERT_CLIENT_SECRET_HERE
+  refresh_token: INSERT_REFRESH_TOKEN_HERE
+# The following values are optional:
+
+# The following are optional settings for using a proxy.
+# proxy_info:
+#  host: INSERT_HOST_HERE
+#  port: INSERT_PROXY_PORT_HERE
+# The following values are optional:
+#  disable_ssl_certificate_validation: False
+#  ca_certs: INSERT_PATH_HERE
