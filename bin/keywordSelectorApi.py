@@ -4,8 +4,6 @@ class IdeaSelector():
     def instantiateService(self, language, location):
         pass #instantiate API service and set Language and location 
     
-    def get_ideas(self, keyweords, iterations):
-        pass # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
 
 
 
@@ -21,7 +19,7 @@ class IdeasIterator():
     
     def run(self, keywords):
         next_keywords = [keywords]
-        for i in self.iterations:
+        for i in range(1, self.iterations+1):
             new_selector = IdeaSelector()
             new_selector.instantiateService(self.language, self.location)
             this_ideas = new_selector.get_ideas(keywords, self.iterations)
