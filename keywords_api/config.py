@@ -1,7 +1,7 @@
 #These will be in the function
 PAGE_SIZE = 10
 
-SELECTOR = {
+SELECTOR_BASE = {
     'searchParameters': [{
         'xsi_type': 'RelatedToQuerySearchParameter',
         #Variable input with function here

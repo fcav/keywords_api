@@ -26,7 +26,7 @@ class IdeaSelector(object):
         self.service = service
         self.keywords = keywords
 
-    def buildSelector(self, keyword):
+    def buildSelector(self):
         pass
 
     def getIdeas(self, selector, keywords, iterations):
