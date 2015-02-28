@@ -1,32 +1,10 @@
-from apiconnector import ApiConnector
+from keywords_api.apiconnector import ApiConnector
 import argparse
+from config import SELECTOR
 
-#These will be in the function
-page_size = 10
-
-selector = {
-    'searchParameters': [{
-        'xsi_type': 'RelatedToQuerySearchParameter',
-        #Variable input with function here
-        'queries': ['jumper']
-    },
-    {
-        #Language setting from variable here
-        'xsi_type': 'LanguageSearchParameter',
-        'languages': [{'id': '1000'}]
-    }],
-    'ideaType': 'KEYWORD',
-    'requestType': 'IDEAS',
-    'requestedAttributeTypes': ['KEYWORD_TEXT',
-                                'SEARCH_VOLUME',
-                                'AVERAGE_CPC',
-                                'COMPETITION',],
-    'paging': {'startIndex': '0',
-               'numberResults': str(page_size)}
-}
 
 #Here be functions
-page = targeting_idea_service.get(selector)
+page = targeting_idea_service.get(SELECTOR)
 if 'entries' in page:
     for result in page['entries']:
         attributes = {}
