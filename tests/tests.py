@@ -8,13 +8,22 @@ class TestApiConnector(unittest.TestCase):
 
     def setUp(self):
         self.selector = SELECTOR
+        self.con = ApiConnector()
+        self.service = self.con.getIdeaService()
 
     def test_can_get_idea_service(self):
         try:
             con = ApiConnector()
-            service = con.getIdeaService
+            service = con.getIdeaService()
         finally:
             self.assertIsNotNone(service)
+
+    def test_getIdeas_returns_dict(self):
+        test_keywords = ['keywords', 'for', 'unittest']
+        self.con.getIdeaService()
+        test_page = self.service.get(self.selector)
+        pdb.set_trace()
+        #self.assertIsInstance(self.con.getIdeas(test_keywords, 1), dict)
 
 
 class TestKeywordSelector(unittest.TestCase):
