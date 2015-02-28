@@ -11,12 +11,16 @@ WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 YAML_FILE = WORKING_DIR + '/googleads.yaml'
 sys.path.append(WORKING_DIR)
 
+
 class ApiConnector(object):
 
     def getIdeaService(self):
         self.client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
         self.service = self.client.GetService('TargetingIdeaService')
         return self.service
+
+    def buildSelector(self, keyword):
+        pass
 
     def getIdeas(self, keywords, iterations):
         # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
