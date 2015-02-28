@@ -21,10 +21,17 @@ class ApiConnector(object):
         self.service = self.client.GetService('TargetingIdeaService')
         return self.service
 
-    def buildSelector(self, keyword):
+
+class IdeaSelector(object):
+
+    def __init__(self, service, keywords):
+        self.service = service
+        self.keywords = keywords
+
+    def buildSelector(self):
         pass
 
-    def getIdeas(self, keywords, iterations):
+    def getIdeas(self, selector, keywords, iterations):
         # this should return a dictionary of {<original_keyword>: {'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}
         pass
 
