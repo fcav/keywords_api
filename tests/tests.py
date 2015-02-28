@@ -1,16 +1,39 @@
 import pdb
 
 import unittest
-from apiconnector import ApiConnector
+from keywords_api.apiconnector import ApiConnector
+
 
 class TestApiConnector(unittest.TestCase):
 
     def setUp(self):
-        pass
+        selector = {
+            'searchParameters': [{
+                'xsi_type': 'RelatedToQuerySearchParameter',
+                #Variable input with function here
+                'queries': ['jumper']
+            },
+            {
+                #Language setting from variable here
+                'xsi_type': 'LanguageSearchParameter',
+                'languages': [{'id': '1000'}]
+            }],
+            'ideaType': 'KEYWORD',
+            'requestType': 'IDEAS',
+            'requestedAttributeTypes': ['KEYWORD_TEXT',
+                                        'SEARCH_VOLUME',
+                                        'AVERAGE_CPC',
+                                        'COMPETITION',],
+            'paging': {'startIndex': '0',
+                       'numberResults': str(page_size)}
+        }
 
-    def test_return_status_is_200(self):
-        con = ApiConnector()
-        service = con.getIdeaService
+    def test_can_get_idea_service(self):
+        try:
+            con = ApiConnector()
+            service = con.getIdeaService
+        finally:
+            self.assertIsNotNone(service)
 
 
 class TestKeywordSelector(unittest.TestCase):

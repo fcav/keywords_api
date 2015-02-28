@@ -1,4 +1,4 @@
-from keywords_api.apiconnector import ApiConnector
+from apiconnector import ApiConnector
 import argparse
 
 #These will be in the function
