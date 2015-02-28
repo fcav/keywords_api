@@ -2,31 +2,12 @@ import pdb
 
 import unittest
 from keywords_api.apiconnector import ApiConnector
-
+from keywords_api.config import SELECTOR
 
 class TestApiConnector(unittest.TestCase):
 
     def setUp(self):
-        selector = {
-            'searchParameters': [{
-                'xsi_type': 'RelatedToQuerySearchParameter',
-                #Variable input with function here
-                'queries': ['jumper']
-            },
-            {
-                #Language setting from variable here
-                'xsi_type': 'LanguageSearchParameter',
-                'languages': [{'id': '1000'}]
-            }],
-            'ideaType': 'KEYWORD',
-            'requestType': 'IDEAS',
-            'requestedAttributeTypes': ['KEYWORD_TEXT',
-                                        'SEARCH_VOLUME',
-                                        'AVERAGE_CPC',
-                                        'COMPETITION',],
-            'paging': {'startIndex': '0',
-                       'numberResults': str(page_size)}
-        }
+        self.selector = SELECTOR
 
     def test_can_get_idea_service(self):
         try:
