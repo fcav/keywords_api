@@ -21,7 +21,7 @@ class IdeasIterator():
     
     def run(self, keywords):
         next_keywords = [keywords]
-        for i in self.iterations:
+        for i in range(1, self.iterations+1):
             new_selector = IdeaSelector()
             new_selector.instantiateService(self.language, self.location)
             this_ideas = new_selector.get_ideas(keywords, self.iterations)
