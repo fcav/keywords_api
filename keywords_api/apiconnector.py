@@ -42,17 +42,17 @@ class IdeasIterator():
         self.results_per_request = results_per_request
         self.iterations = iterations
         self.language = language
+        self.location = location
         self.output_path = DATA_DIR
         self.headers = None
-        self.localaion = location
-        self.output_path = ''
+        self.selector = ApiConnector().getIdeaService()
 
     def run(self, keywords):
         next_keywords = [keywords]
         for i in range(1, self.iterations+1):
-            new_selector = ApiConnector()
-            new_selector.instantiateService(self.language, self.location)
-            this_ideas = new_selector.get_ideas(keywords, self.iterations)
+            new_selector = IdeaSelector(self.selector, keywords)
+            new_selector.buildSelector()
+            this_ideas = new_selector.get_ideas()
             next_keywords = [x['keyword'] for x in this_ideas.values()]
             self.write_in_csv(this_ideas, i)
 
@@ -61,12 +61,13 @@ class IdeasIterator():
             self.headers = ['Iteration', 'SeedKeyword']
             self.headers += res_dic.keys()
             with open('names.csv', 'w') as csvfile:
+                pass
                 
 if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keyword", help="The keyword you want to start with")
+    parser.add_argument('-k', "--keywords", help="The keywords you want to start with")
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iteration. If not given it will defaults to 5")
     parser.add_argument("--r", "--results", defaukt = 10, help="Number of results per iteration. If not given it will default to 10")
     parser.add_argument("--ln", "--language", default = 'English', help="Language. If not entered it will default to English")
