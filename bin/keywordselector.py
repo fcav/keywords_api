@@ -1,4 +1,4 @@
-import ApiConnector
+import apiconnector
 
 #These will be in the function
 page_size = 10
