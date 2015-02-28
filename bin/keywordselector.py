@@ -1,4 +1,5 @@
-import apiconnector
+from apiconnector import ApiConnector
+import argparse
 
 #These will be in the function
 page_size = 10
