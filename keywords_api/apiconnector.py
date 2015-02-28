@@ -1,6 +1,8 @@
 import sys
 import os
+import csv
 from googleads.adwords import AdWordsClient
+
 
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 YAML_FILE = WORKING_DIR + 'googleads.yaml'
@@ -26,7 +28,8 @@ class IdeasIterator():
         self.iterations = iterations
         self.language = language
         self.localtion
-        self.output_path = ''
+        self.output_path = DATA_DIR
+        self.headers = None
         
     
     def run(self, keywords):
@@ -39,7 +42,15 @@ class IdeasIterator():
             self.write_in_csv(this_ideas, i)
     
     def write_in_csv(self, res_dic, iteration):
-        pass
+        if not self.headers:
+            self.headers = ['Iteration', 'SeedKeyword']
+            self.headers += res_dic.keys()
+            with open('names.csv', 'w') as csvfile:
+                
+          
+        
+            
+        
             
             
             
