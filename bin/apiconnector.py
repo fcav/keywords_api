@@ -9,5 +9,5 @@ class ApiConnector(object):
 
     def KeywordConnector(self):
         client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
-        targeting_idea_service = client.GetService('TargetingIdeaService')
+        service = client.GetService('TargetingIdeaService')
 
