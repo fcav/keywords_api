@@ -5,7 +5,7 @@ SELECTOR = {
     'searchParameters': [{
         'xsi_type': 'RelatedToQuerySearchParameter',
         #Variable input with function here
-        'queries': ['jumper']
+        'queries': ['jumper', 'the man']
     },
     {
         #Language setting from variable here
