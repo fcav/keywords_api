@@ -7,7 +7,8 @@ sys.path.append(WORKING_DIR)
 
 class ApiConnector(object):
 
-    def KeywordConnector(self):
+    def getIdeaService(self):
         client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
         service = client.GetService('TargetingIdeaService')
+        return service
 
