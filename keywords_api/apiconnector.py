@@ -122,7 +122,7 @@ class IdeasIterator():
         self.output_file = os.path.join(DATA_DIR, time + '_' +output_file)
         self.all_ideas = []
 
-    def worker(self, keyword):
+    def worker(self, keyword, i):
         max_tries = 10
         ideas = None
         print 'Getting Ideas for keyword: {0}'.format(keyword)
@@ -133,9 +133,11 @@ class IdeasIterator():
                 ideas = selector.getIdeas()
                 break
             except:
-                time.sleep(2)
+                time.sleep(min(i*i*5, 60))
         if not ideas:
-            raise NameError('API Call rate exceeded, ideas could not be retrieved')
+            print('Warning - API Call rate exceeded 1 set of ideas could not be retrieved.')
+            print('          Continuing with other ideas.')
+            print('          Output file will be reduced.')
             exit(1)
         self.all_ideas.append(ideas)
 
@@ -147,7 +149,7 @@ class IdeasIterator():
             threads = []
             next_seed_keywords = []
             for keyword in self.seed_keywords:
-                t = threading.Thread(name=keyword, target=self.worker, args=(keyword,))
+                t = threading.Thread(name=keyword, target=self.worker, args=(keyword,i,))
                 threads.append(t)
 
             [x.start() for x in threads]
