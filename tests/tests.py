@@ -19,7 +19,6 @@ class TestApiConnector(unittest.TestCase):
 class TestIdeaSelector(unittest.TestCase):
 
     def setUp(self):
-        self.selector = SELECTOR
         self.con = ApiConnector()
         self.service = self.con.getIdeaService()
         self.test_keywords = ['keywords', 'for', 'unittest']
