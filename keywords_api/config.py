@@ -1,16 +1,20 @@
-#These will be in the function
-PAGE_SIZE = 10
+import os
+import sys
+
+WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
+YAML_FILE = os.path.join(WORKING_DIR, 'googleads.yaml')
+DATA_DIR = os.path.join(WORKING_DIR, '..', 'data')
+sys.path.append(WORKING_DIR)
 
 SELECTOR = {
-    'searchParameters': [
-    {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': ['jumper']},
-    {'xsi_type': 'LanguageSearchParameter','languages': [{'id': '1000'}]}],
     'ideaType': 'KEYWORD',
     'requestType': 'IDEAS',
     'requestedAttributeTypes': ['KEYWORD_TEXT',
                                 'SEARCH_VOLUME',
                                 'AVERAGE_CPC',
                                 'COMPETITION',],
-    'paging': {'startIndex': '0',
-               'numberResults': str(PAGE_SIZE)}
 }
+
+
+## lan : 1000
+##
