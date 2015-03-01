@@ -138,19 +138,16 @@ class IdeasIterator():
         """
         f = open(self.output_file, 'a')
         if not self.headers:
-            self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
-            self.headers += SELECTOR['requestedAttributeTypes']
-            writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
-            writer.writeheader()
-
+			self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
+			self.headers += SELECTOR['requestedAttributeTypes']
+			self.writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
+			self.writer.writeheader()
         for seed_keyword in ideas:
             rows_to_write = ideas[seed_keyword]
             for i in range(len(rows_to_write)):
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
-
-            writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
-            writer.writerows(rows_to_write)
+            self.writer.writerows(rows_to_write)
 
 if __name__ == '__main__':
 
