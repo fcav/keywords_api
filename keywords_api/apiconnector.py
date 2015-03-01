@@ -60,7 +60,7 @@ class IdeaSelector(object):
         else:
             raise TypeError('keyword must be a string')
 
-    def buildSelector(self, language='1000', location=2826, page_size=10):
+    def buildSelector(self, language='1000', location='2826', page_size=10):
         self.page_size = page_size
         self.selector = SELECTOR
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
@@ -109,7 +109,7 @@ class IdeaSelector(object):
 
 class IdeasIterator():
 
-    def __init__(self, seed_keywords, page_size=10, iterations=5, language='1000', location=2826, output_file = 'output.csv'):
+    def __init__(self, seed_keywords, page_size=10, iterations=5, language='1000', location='2826', output_file = 'output.csv'):
         self.seed_keywords = seed_keywords
         self.page_size = page_size
         self.iterations = iterations
@@ -156,13 +156,14 @@ if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="Enter a list of seed keywords", type=list, required=True)
+    parser.add_argument('-k', "--keywords",  help="Enter a list of seed keywords", type=string, action='append', required=True)
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration; default = 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language; default = English")
     parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
     args = parser.parse_args()
 
+    pdb.set_trace()
     if args.language == 'list':
         print LANGUAGE.keys()
         sys.exit()
@@ -170,5 +171,6 @@ if __name__ == '__main__':
     locationcode = LocationSelector().get_code(args.location)
     languagecode = str(LANGUAGE[args.language])
 
+    
     ideas = IdeasIterator(args.keywords, args.page_size, args.iterations, languagecode, locationcode)
     ideas.run()
