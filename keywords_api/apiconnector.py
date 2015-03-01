@@ -135,7 +135,9 @@ class IdeasIterator():
             except:
                 time.sleep(60)
         if not ideas:
-            raise NameError('API Call rate exceeded, ideas could not be retrieved')
+            print('Warning - API Call rate exceeded 1 set of ideas could not be retrieved.')
+            print('          Continuing with other ideas.')
+            print('          Output file will be reduced.')
             exit(1)
         self.all_ideas.append(ideas)
 
