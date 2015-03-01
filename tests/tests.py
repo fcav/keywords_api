@@ -44,6 +44,11 @@ class TestIdeaSelector(unittest.TestCase):
         self.idea_selector.buildSelector()
         self.ideas = self.idea_selector.getIdeas()
 
+
+    def test_buildSelector_right_location(self):
+        pass
+
+
     def test_getIdeas_returns_dict(self):
         self.assertIsInstance(self.ideas, dict)
 
