@@ -75,7 +75,7 @@ class IdeaSelector(object):
         returns a dictionary where:
             key: seed keyword
             value: list of keyword ideas
-            {<original_keyword>: [{KEYWORD_TEXT: STRING,
+            {<original_keyword>: [{[KEYWORD_TEXT]: STRING,
                                    AVERAGE_CPC: REAL
                                    COMPETITION: STRING,
                                    RANK: INT`,
@@ -126,20 +126,18 @@ class IdeasIterator():
                 selector = IdeaSelector(self.service, keyword)
                 selector.buildSelector(self.language, self.location, self.page_size)
                 ideas = selector.getIdeas()
-<<<<<<< HEAD
-                pdb.set_trace()
+                for idea in ideas[keyword]:
+                    next_seed_keywords.append(idea['KEYWORD_TEXT'])
                 self.append_to_csv(ideas, i)
-=======
-                self.append_to_csv(i)
->>>>>>> cec59d56617bcfc195b8b18319c4c287a7ab4913
+            self.seed_keywords = next_seed_keywords
 
 
-    def append_to_csv(self, iteration):
+    def append_to_csv(self, ideas, iteration):
         """
         Append a "seed_keyword dictionary" to a csv file
         """
-        for seed_keyword in self.seed_keywords:
-            rows_to_write = self.seed_keywords[seed_keyword]
+        for seed_keyword in ideas:
+            rows_to_write = ideas[seed_keyword]
             for i in range(len(rows_to_write)):
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
@@ -155,11 +153,11 @@ if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="The keywords you want to start with", nargs='+')
+    parser.add_argument('-k', "--keywords", help="The keywords you want to start with", nargs='+', required=True)
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iteration. If not given it will defaults to 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration. If not given it will default to 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language. TIf not entered it will default to English")
-    parser.add_argument("-lc", "--location", default = 'UK',  help="Location. If not entered it will defaulo see teh choices, type: -ln list. t to UK")
+    parser.add_argument("-lc", "--location", default = 'UK',  help="Location. If not entered it will default to the choices, type: -ln list. t to UK")
     args = parser.parse_args()
 
     if args.language == 'list':
