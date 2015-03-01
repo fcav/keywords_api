@@ -50,12 +50,15 @@ class TestIterator(unittest.TestCase):
         self.test_headers = ['RANK', 'AVERAGE_CPC', 'SEARCH_VOLUME', 'KEYWORD_TEXT', 'COMPETITION']
         self.iter = IdeasIterator(self.test_ideas)
         self.testfile = self.iter.output_file
-        self.iter.append_to_csv(1)
+        os.remove(self.testfile) if os.path.exists(self.testfile) else None
 
     def test_file_is_created(self):
+        self.assertFalse(os.path.exists(self.testfile))
+        self.iter.append_to_csv(1)
         self.assertTrue(os.path.exists(self.testfile))
 
     def test_writes_headers_to_csv(self):
+        self.iter.append_to_csv(1)
         with open(self.testfile) as f:
             reader = csv.reader(f)
 
