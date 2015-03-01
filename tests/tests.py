@@ -81,13 +81,6 @@ class TestIterator(unittest.TestCase):
         self.iter.append_to_csv(self.test_ideas, 1)
         self.assertTrue(os.path.exists(self.testfile))
 
-    def test_writes_headers_to_csv(self):
-        self.iter.f = open(self.testfile, 'a')
-        self.iter.append_to_csv(self.test_ideas, 1)
-        reader = csv.reader(self.iter.f)
-        headers = reader.next()
-        self.assertItemsEqual(headers, self.test_headers)
-
     def test_run_calls_append_to_csv(self):
         self.iter.append_to_csv = mock.Mock()
         self.iter.run()
