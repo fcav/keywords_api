@@ -20,13 +20,13 @@ class TestApiConnector(unittest.TestCase):
 class TestLocationSelector(unittest.TestCase):
 
     def setUp(self):
-        self.selector = LocationSelector
+        self.selector = LocationSelector()
 
     def test_buildSelector_right_location(self):
         self.selector.buildselector('Italy')
         location_in_selector = [x['values'] for x in self.selector.selector['predicates']]
         self.assertIsInstance(self.selector.selector, dict)
-        self.assertIn('Italy', location_in_selector)
+        self.assertIn(['Italy'], location_in_selector)
         self.assertEqual(len(location_in_selector), 2)
 
 
