@@ -2,7 +2,7 @@ import pdb
 
 import unittest
 from keywords_api.apiconnector import ApiConnector, IdeaSelector
-from keywords_api.config import SELECTOR, PAGE_SIZE
+from keywords_api.config import SELECTOR
 
 class TestApiConnector(unittest.TestCase):
 
