@@ -133,7 +133,7 @@ class IdeasIterator():
                 ideas = selector.getIdeas()
                 break
             except:
-                time.sleep(2)
+                time.sleep(60)
         if not ideas:
             raise NameError('API Call rate exceeded, ideas could not be retrieved')
             exit(1)
