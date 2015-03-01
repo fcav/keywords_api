@@ -91,7 +91,8 @@ class TestIterator(unittest.TestCase):
     def test_run_calls_append_to_csv(self):
         self.iter.append_to_csv = mock.Mock()
         self.iter.run()
-        self.iter.append_to_csv.assert_called()
+        # should be 11 calls, once for headers, once for every idea (10)
+        self.assertEquals(self.iter.append_to_csv.call_count, 11)
 
 
 if __name__ == '__main__':
