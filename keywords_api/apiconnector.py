@@ -19,10 +19,13 @@ class ApiConnector(object):
 
 class IdeaSelector(object):
 
-    def __init__(self, service, keywords):
+    def __init__(self, service, keyword):
         self.service = service
-        self.keywords = keywords
-    
+        if isinstance(keyword, str):
+            self.keyword = keyword
+        else:
+            raise TypeError('keyword must be a string')
+
     def _get_language(self, language):
         return 1000
 
@@ -38,16 +41,29 @@ class IdeaSelector(object):
         self.selector['paging'] = paging_param
 
     def getIdeas(self):
-        # this should return a dictionary of {[<original_keywords>]: [{'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}]}
+        """
+        returns a dictionary:
+            {<original_keyword>: [{KEYWORD_TEXT: STRING,
+                                   AVERAGE_CPC: STRING,
+                                   SEARCH_VOLUME: STRING,
+                                   COMPETITION: STRING,
+                                   RANK: INT,
+                                   }]
+            }
+        """
         page = self.service.get(self.selector)
         ideas = page.entries
         clean_ideas = []
         for idea in ideas:
             clean_idea = {}
             for entry in idea.data:
-                clean_idea[entry.key] = entry.value.value
-        pdb.set_trace()
-        return {self.keywords: 'test'}
+                if entry.key == "AVERAGE_CPC":
+                    clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                else:
+                    clean_idea[str(entry.key)] = str(entry.value.value)
+            clean_idea['RANK'] = ideas.index(idea)
+            clean_ideas.append(clean_idea)
+        return {self.keyword: clean_ideas}
 
 
 class IdeasIterator():
@@ -91,6 +107,6 @@ if __name__ == '__main__':
     parser.add_argument("-lc", "--location", default = 'en_US', help="Location. If not entered it will default to UK")
     args = parser.parse_args()
 
-    
+
     ideas = IdeasIterator(args.results, args.iterations, args.language, args.location)
     ideas.run(args.keywords)
