@@ -30,14 +30,18 @@ class IdeaSelector(object):
 
     def buildSelector(self):
         self.selector = SELECTOR
-        return SELECTOR
 
     def getIdeas(self):
-        # this should return a dictionary of {[<original_keyword>]: [{'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}]}
+        # this should return a dictionary of {[<original_keywords>]: [{'keyword': STRING, 'Rank': INT, 'SearchVolume': INT, 'AverageCPC': FLOAT, 'Competition': INT, DUPE: FLOAT}]}
         page = self.service.get(self.selector)
         ideas = page.entries
+        clean_ideas = []
+        for idea in ideas:
+            clean_idea = {}
+            for entry in idea.data:
+                clean_idea[entry.key] = entry.value.value
         pdb.set_trace()
-        return ideas
+        return {self.keywords: 'test'}
 
 
 class IdeasIterator():
