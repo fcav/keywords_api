@@ -44,7 +44,10 @@ class TestIdeaSelector(unittest.TestCase):
 
 
     def test_buildSelector_right_location(self):
-        pass
+        self.idea_selector.buildSelector(location='blah')
+        location_in_selector = [x.get('locations', None) for x in self.idea_selector.selector['searchParameters']]
+        self.assertIsInstance(self.idea_selector.selector, dict)
+        self.assertIn([{'id': 'blah'}], location_in_selector)
 
     def test_getIdeas_returns_dict(self):
         self.assertIsInstance(self.ideas, dict)
