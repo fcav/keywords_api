@@ -1,15 +1,13 @@
 import pdb
 
 import unittest
-from keywords_api.apiconnector import ApiConnector
+from keywords_api.apiconnector import ApiConnector, IdeaSelector
 from keywords_api.config import SELECTOR
 
 class TestApiConnector(unittest.TestCase):
 
     def setUp(self):
-        self.selector = SELECTOR
-        self.con = ApiConnector()
-        self.service = self.con.getIdeaService()
+        pass
 
     def test_can_get_idea_service(self):
         try:
@@ -18,15 +16,25 @@ class TestApiConnector(unittest.TestCase):
         finally:
             self.assertIsNotNone(service)
 
+class TestIdeaSelector(unittest.TestCase):
+
+    def setUp(self):
+        self.con = ApiConnector()
+        self.service = self.con.getIdeaService()
+        self.test_keywords = ['keywords', 'for', 'unittest']
+        self.idea_selector = IdeaSelector(self.service, self.test_keywords)
+        self.idea_selector.buildSelector()
+        self.ideas = self.idea_selector.getIdeas()
+
     def test_getIdeas_returns_dict(self):
-        test_keywords = ['keywords', 'for', 'unittest']
-        self.con.getIdeaService()
-        test_page = self.service.get(self.selector)
-        pdb.set_trace()
-        #self.assertIsInstance(self.con.getIdeas(test_keywords, 1), dict)
+        self.assertIsInstance(self.ideas, dict)
 
+    def test_getIdeas_returns_number_of_entries_asked_for(self):
+        page_size_requested = self.idea_selector.selector['paging']['numberResults']
+        original_kws = self.idea_selector.selector['searchParameters'][0]
+        self.assertEquals(len(self.ideas[original_kws]), int(page_size_requested))
 
-class TestKeywordSelector(unittest.TestCase):
+class TestIterator(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -36,7 +44,9 @@ class TestKeywordSelector(unittest.TestCase):
 
 if __name__ == '__main__':
     api_con_suite = unittest.TestLoader().loadTestsFromTestCase(TestApiConnector)
-    kw_sel_suite = unittest.TestLoader().loadTestsFromTestCase(TestKeywordSelector)
+    kw_sel_suite = unittest.TestLoader().loadTestsFromTestCase(TestIdeaSelector)
+    iter_suite = unittest.TestLoader().loadTestsFromTestCase(TestIterator)
 
     unittest.TextTestRunner(verbosity=2).run(api_con_suite)
     unittest.TextTestRunner(verbosity=2).run(kw_sel_suite)
+    unittest.TextTestRunner(verbosity=2).run(iter_suite)
