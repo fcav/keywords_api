@@ -8,9 +8,6 @@ import mock
 
 class TestApiConnector(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_can_get_idea_service(self):
         try:
             con = ApiConnector()
@@ -51,7 +48,6 @@ class TestIdeaSelector(unittest.TestCase):
         location_in_selector = [x.get('locations', None) for x in self.idea_selector.selector['searchParameters']]
         self.assertIsInstance(self.idea_selector.selector, dict)
         self.assertIn([{'id': 'blah'}], location_in_selector)
-
 
     def test_getIdeas_returns_dict(self):
         self.assertIsInstance(self.ideas, dict)
@@ -94,7 +90,8 @@ class TestIterator(unittest.TestCase):
     def test_run_calls_append_to_csv(self):
         self.iter.append_to_csv = mock.Mock()
         self.iter.run()
-        self.iter.append_to_csv.assert_called()
+        # should be 11 calls, once for headers, once for every idea (10)
+        self.assertEquals(self.iter.append_to_csv.call_count, 11)
 
 
 if __name__ == '__main__':
