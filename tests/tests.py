@@ -21,8 +21,8 @@ class TestIdeaSelector(unittest.TestCase):
     def setUp(self):
         self.con = ApiConnector()
         self.service = self.con.getIdeaService()
-        self.test_keywords = ['keywords', 'for', 'unittest']
-        self.idea_selector = IdeaSelector(self.service, self.test_keywords)
+        self.test_keyword = 'keyword for unittest'
+        self.idea_selector = IdeaSelector(self.service, self.test_keyword)
         self.idea_selector.buildSelector()
         self.ideas = self.idea_selector.getIdeas()
 
@@ -33,6 +33,13 @@ class TestIdeaSelector(unittest.TestCase):
         page_size_requested = self.idea_selector.selector['paging']['numberResults']
         original_kws = self.idea_selector.selector['searchParameters'][0]
         self.assertEquals(len(self.ideas[original_kws]), int(page_size_requested))
+
+    def test_getIdeas_returns_required_attributes(self):
+        original_kws = self.idea_selector.selector['searchParameters'][0]
+        for idea in self.ideas[original_kws]:
+            pdb.set_trace()
+
+            self.assertEquals(len(1), int(page_size_requested))
 
 class TestIterator(unittest.TestCase):
 
