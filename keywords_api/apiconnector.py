@@ -29,7 +29,7 @@ class IdeaSelector(object):
             raise TypeError('keyword must be a string')
 
     def _get_language(self, language):
-        return 'Italy'
+        return 1000
 
     def buildSelector(self, language='English', location='en_US', page_size=10):
         self.page_size = page_size
@@ -37,25 +37,26 @@ class IdeaSelector(object):
         language_code = str(self._get_language(language))
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
         language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language_code}]}
-        location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'locationName': language_code}]}
         paging_param =  {'startIndex': '0','numberResults': str(page_size)}
-        self.selector['searchParameters'] = [keyword_param, language_param, location_param]
+        self.selector['searchParameters'] = [keyword_param, language_param]
         ##self.selector['localeCode'] = location
         self.selector['paging'] = paging_param
 
     def getIdeas(self):
         """
-        returns a dictionary:
+        returns a dictionary where:
+            key: seed keyword
+            value: list of keyword ideas
             {<original_keyword>: [{KEYWORD_TEXT: STRING,
                                    AVERAGE_CPC: STRING,
                                    SEARCH_VOLUME: STRING,
                                    COMPETITION: STRING,
                                    RANK: INT,
-                                   }]
+                                   },
+                                   ...]
             }
         """
         page = self.service.get(self.selector)
-        pdb.set_trace()
         ideas = page.entries
         clean_ideas = []
         for idea in ideas:
@@ -68,40 +69,48 @@ class IdeaSelector(object):
                         clean_idea[str(entry.key)] = None
                 else:
                     clean_idea[str(entry.key)] = str(entry.value.value)
-            clean_idea['RANK'] = ideas.index(idea)
+            clean_idea['RANK'] = ideas.index(idea)+1
             clean_ideas.append(clean_idea)
         return {self.keyword: clean_ideas}
 
 
 class IdeasIterator():
 
-    def __init__(self, page_size=10, iterations=5, language='English', location='UK'):
+    def __init__(self, seed_keywords, page_size=10, iterations=5, language='English', location='UK', output_file = 'output.csv'):
+        self.seed_keywords = seed_keywords
         self.page_size = page_size
         self.iterations = iterations
         self.language = language
         self.location = location
-        self.output_path = DATA_DIR
+        self.output_file = os.path.join(DATA_DIR, output_file)
         self.headers = None
         self.service = ApiConnector().getIdeaService()
 
-    def run(self, keyword_list):
-        this_keyword_list = keyword_list
+    def run(self):
         for i in range(1, self.iterations+1):
-            next_keyword_list = []
-            for k in this_keyword_list:
-                new_selector = IdeaSelector(self.selector, k)
-                new_selector.buildSelector(self.language, self.location, self.page_size)
-                this_ideas = new_selector.getIdeas()
-                next_keyword_list += [x['keyword'] for x in this_ideas.values()]
-                self.write_in_csv(this_ideas, i)
-            this_keyword_list = next_keyword_list
+            for keyword in self.seed_keywords:
+                selector = IdeaSelector(self.service, keyword)
+                selector.buildSelector(self.language, self.location, self.page_size)
+                ideas = selector.getIdeas()
+                self.append_to_csv(ideas, i)
 
-    def write_in_csv(self, res_dic, iteration):
-        if not self.headers:
-            self.headers = ['Iteration', 'SeedKeyword']
-            self.headers += res_dic.keys()
-            with open('names.csv', 'w') as csvfile:
-                pass
+    def append_to_csv(self, iteration):
+        """
+        Append an "seed_keyword dictionary" to a csv file
+        """
+        for seed_keyword in self.seed_keywords:
+            rows_to_write = self.seed_keywords[seed_keyword]
+            for row in rows_to_write:
+                rows_to_write[row]['ITERATION'] = iteration
+                rows_to_write[row]['SEED_KEYWORD'] = seed_keyword
+            if not self.headers:
+                self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
+                self.headers += SELECTOR['requestedAttributeTypes']
+            with open(self.output_file, 'w') as f:
+                writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
+                writer.writeheader()
+                writer.writerows(rows_to_write)
+
 
 if __name__ == '__main__':
 
@@ -114,5 +123,5 @@ if __name__ == '__main__':
     parser.add_argument("-lc", "--location", default = 'en_US', help="Location. If not entered it will default to UK")
     args = parser.parse_args()
 
-    ideas = IdeasIterator(args.page_size, args.iterations, args.language, args.location)
-    ideas.run(args.keywords)
+    ideas = IdeasIterator(args.page_size, args.iterations, args.language, args.location, args.keywords)
+    ideas.run()
