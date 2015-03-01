@@ -4,6 +4,7 @@ import csv
 import argparse
 import sys
 import os
+import datetime
 from googleads.adwords import AdWordsClient
 from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR, LANGUAGE_SELECTOR
 
@@ -12,7 +13,6 @@ class NonExistantCode(Exception):
 	pass
 
 class ApiConnector(object):
-
     def __init__(self, service_name='TargetingIdeaService'):
         self.service_name = service_name
 
@@ -115,9 +115,11 @@ class IdeasIterator():
         self.iterations = iterations
         self.language = language
         self.location = location
-        self.output_file = os.path.join(DATA_DIR, output_file)
         self.headers = None
         self.service = ApiConnector().getIdeaService()
+        now = datetime.datetime.utcnow()
+        time = str(now)[:19].replace(' ', '_')
+        self.output_file = os.path.join(DATA_DIR, time + '_' +output_file)
 
     def run(self):
         for i in range(1, self.iterations+1):
@@ -153,7 +155,7 @@ if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="The keywords you want to start with", nargs='+', required=True)
+    parser.add_argument('-k', "--keywords", help="The keywords you want to start with", type = list,  required=True)
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iteration. If not given it will defaults to 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration. If not given it will default to 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language. TIf not entered it will default to English")

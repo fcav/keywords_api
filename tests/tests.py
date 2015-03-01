@@ -76,11 +76,11 @@ class TestIterator(unittest.TestCase):
 
     def test_file_is_created(self):
         self.assertFalse(os.path.exists(self.testfile))
-        self.iter.append_to_csv(1)
+        self.iter.append_to_csv(self.test_ideas, 1)
         self.assertTrue(os.path.exists(self.testfile))
 
     def test_writes_headers_to_csv(self):
-        self.iter.append_to_csv(1)
+        self.iter.append_to_csv(self.test_ideas, 1)
         with open(self.testfile) as f:
             reader = csv.reader(f)
             headers = reader.next()
