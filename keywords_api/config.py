@@ -16,5 +16,18 @@ SELECTOR = {
 }
 
 
+LANGUAGE_SELECTOR = {
+      'fields': ['Id', 'LocationName', 'DisplayType', 'CanonicalName',
+                 'ParentLocations', 'Reach', 'TargetingStatus'],
+      'predicates': [{
+          'field': 'LocationName',
+          'operator': 'IN',
+          'values': ['Italy']
+      }, {
+          'field': 'Locale',
+          'operator': 'EQUALS',
+          'values': ['en']
+      }]
+  }
 ## lan : 1000
 ##
