@@ -148,12 +148,13 @@ class IdeasIterator():
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
             self.writer.writerows(rows_to_write)
+        f.close()
 
 if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="Enter a list of seed keywords", nargs='+', required=True)
+    parser.add_argument('-k', "--keywords", help="Enter a list of seed keywords", type=list, required=True)
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration; default = 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language; default = English")
