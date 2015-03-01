@@ -2,7 +2,7 @@ import pdb
 
 import unittest
 from keywords_api.apiconnector import ApiConnector, IdeaSelector
-from keywords_api.config import SELECTOR
+from keywords_api.config import SELECTOR, PAGE_SIZE
 
 class TestApiConnector(unittest.TestCase):
 
@@ -30,16 +30,16 @@ class TestIdeaSelector(unittest.TestCase):
         self.assertIsInstance(self.ideas, dict)
 
     def test_getIdeas_returns_number_of_entries_asked_for(self):
-        page_size_requested = self.idea_selector.selector['paging']['numberResults']
-        original_kws = self.idea_selector.selector['searchParameters'][0]
-        self.assertEquals(len(self.ideas[original_kws]), int(page_size_requested))
+        self.assertEquals(len(self.ideas[self.test_keyword]), PAGE_SIZE)
 
     def test_getIdeas_returns_required_attributes(self):
-        original_kws = self.idea_selector.selector['searchParameters'][0]
-        for idea in self.ideas[original_kws]:
-            pdb.set_trace()
-
-            self.assertEquals(len(1), int(page_size_requested))
+        requested_attrs = SELECTOR['requestedAttributeTypes']
+        for idea in self.ideas[self.test_keyword]:
+            # Assert list recieved and list requested are the same
+            # RANK is derived (not requested) so we add that to request list for unittest
+            self.assertItemsEqual(idea.keys(), requested_attrs+['RANK'])
+        # Check that we get the number of results we wanted from API
+        self.assertEquals(len(self.ideas[self.test_keyword]), PAGE_SIZE)
 
 class TestIterator(unittest.TestCase):
 
