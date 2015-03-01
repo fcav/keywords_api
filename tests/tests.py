@@ -73,6 +73,7 @@ class TestIterator(unittest.TestCase):
         self.test_headers = ['RANK', 'AVERAGE_CPC', 'SEARCH_VOLUME', 'KEYWORD_TEXT', 'COMPETITION', 'ITERATION', 'SEED_KEYWORD']
         self.iter = IdeasIterator(self.test_keywords, iterations=2)
         self.testfile = self.iter.output_file
+        self.iter.f = open(self.testfile, 'a')
         os.remove(self.testfile) if os.path.exists(self.testfile) else None
 
     def test_file_is_created(self):
