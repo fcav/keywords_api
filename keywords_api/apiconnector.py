@@ -3,6 +3,7 @@ import os
 import csv
 import argparse
 import sys
+import os
 from googleads.adwords import AdWordsClient
 from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR, LANGUAGE_SELECTOR
 
@@ -45,7 +46,7 @@ class LocationSelector():
         self.buildselector(location)
         a = self.service.get(self.selector)
         if not a:
-            raise NonExistantCode('The location taht you have given does not exist')
+            raise NonExistantCode('The location that you have given does not exist')
         return [x.location.id for x in a][0]
 
 
@@ -59,11 +60,11 @@ class IdeaSelector(object):
         else:
             raise TypeError('keyword must be a string')
 
-    def buildSelector(self, language='en_US', location=2826, page_size=10):
+    def buildSelector(self, language='1000', location=2826, page_size=10):
         self.page_size = page_size
         self.selector = SELECTOR
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
-        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': '1004'}]}
+        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language}]}
         location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'id': location}]}
         paging_param =  {'startIndex': '0','numberResults': str(page_size)}
         self.selector['searchParameters'] = [keyword_param, location_param, language_param]
@@ -159,7 +160,7 @@ if __name__ == '__main__':
         sys.exit()
 
     locationcode = LocationSelector().get_code(args.location)
-    languagecode = LANGUAGE.get(args.language, None)
+    languagecode = str(LANGUAGE[args.language])
 
-    ideas = IdeasIterator(args.page_size, args.iterations, args.language, locationcode, args.keywords)
+    ideas = IdeasIterator(args.keywords, args.page_size, args.iterations, languagecode, locationcode)
     ideas.run()
