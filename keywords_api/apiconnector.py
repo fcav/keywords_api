@@ -76,10 +76,9 @@ class IdeaSelector(object):
             key: seed keyword
             value: list of keyword ideas
             {<original_keyword>: [{KEYWORD_TEXT: STRING,
-                                   AVERAGE_CPC: STRING,
-                                   SEARCH_VOLUME: STRING,
+                                   AVERAGE_CPC: REAL
                                    COMPETITION: STRING,
-                                   RANK: INT,
+                                   RANK: INT`,
                                    },
                                    ...]
             }
@@ -95,7 +94,7 @@ class IdeaSelector(object):
             for entry in idea.data:
                 if entry.key == "AVERAGE_CPC":
                     try:
-                        clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                        clean_idea[str(entry.key)] = entry.value.value.microAmount/1000000
                     except AttributeError:
                         clean_idea[str(entry.key)] = None
                 else:
@@ -122,11 +121,12 @@ class IdeasIterator():
 
     def run(self):
         for i in range(1, self.iterations+1):
-            next_keywords = []
+            next_seed_keywords = []
             for keyword in self.seed_keywords:
                 selector = IdeaSelector(self.service, keyword)
                 selector.buildSelector(self.language, self.location, self.page_size)
                 ideas = selector.getIdeas()
+                pdb.set_trace()
                 self.append_to_csv(ideas, i)
 
 
