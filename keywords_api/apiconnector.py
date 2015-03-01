@@ -156,19 +156,19 @@ if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="Enter a list of seed keywords", type=list, required=True)
+    parser.add_argument('-k', "--keywords", help="Seed keywords - format: -k 'keyword1' 'keyword2' 'keyword3'", nargs='+', type=str, required=True)
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration; default = 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language; default = English")
     parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
-    args = parser.parse_args()
+    xargs = parser.parse_args()
 
-    if args.language == 'list':
+    if xargs.language == 'list':
         print LANGUAGE.keys()
         sys.exit()
 
-    locationcode = LocationSelector().get_code(args.location)
-    languagecode = str(LANGUAGE[args.language])
+    locationcode = LocationSelector().get_code(xargs.location)
+    languagecode = str(LANGUAGE[xargs.language])
 
-    ideas = IdeasIterator(args.keywords, args.page_size, args.iterations, languagecode, locationcode)
+    ideas = IdeasIterator(xargs.keywords, xargs.page_size, xargs.iterations, languagecode, locationcode)
     ideas.run()
