@@ -10,7 +10,7 @@ from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATIO
 import threading
 
 class NonExistantCode(Exception):
-	pass
+    pass
 
 class ApiConnector(object):
     def __init__(self, service_name='TargetingIdeaService'):
@@ -123,7 +123,7 @@ class IdeasIterator():
         self.all_ideas = []
 
     def worker(self, keyword, i):
-        max_tries = 10
+        max_tries = 5
         ideas = None
         for x in range(max_tries):
             try:
@@ -134,19 +134,21 @@ class IdeasIterator():
             except:
                 time.sleep(min(i*i*5, 60))
         if not ideas:
-            print('Warning - API Call rate exceeded 1 set of ideas could not be retrieved.')
+            print('Warning - API Call rate exceeded 1 set of ideas could not be retrieved: keyord {0}.'.format(keyword))
             print('          Continuing with other ideas.')
             print('          Output file will be reduced.')
             exit(1)
-        self.all_ideas.append(ideas)
+        for idea in ideas[keyword]:
+            self.next_seed_keywords.append(idea['KEYWORD_TEXT'])
+            self.append_to_csv(ideas, i)
 
     def run(self):
-    	self.f = open(self.output_file, 'a')
+        self.f = open(self.output_file, 'a')
         for i in range(1, self.iterations+1):
             print("Iteration #{0}".format(i))
             self.all_ideas = []
             threads = []
-            next_seed_keywords = []
+            self.next_seed_keywords = []
             for keyword in self.seed_keywords:
                 t = threading.Thread(name=keyword, target=self.worker, args=(keyword,i,))
                 threads.append(t)
@@ -154,11 +156,7 @@ class IdeasIterator():
             [x.start() for x in threads]
             [x.join() for x in threads]
 
-            for ideas in self.all_ideas:
-                for idea in ideas.values()[0]:
-                    next_seed_keywords.append(idea['KEYWORD_TEXT'])
-                self.append_to_csv(ideas, i)
-            self.seed_keywords = next_seed_keywords
+            self.seed_keywords = self.next_seed_keywords
         self.f.close()
 
 
@@ -167,10 +165,10 @@ class IdeasIterator():
         Append a "seed_keyword dictionary" to a csv file
         """
         if not self.headers:
-			self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
-			self.headers += SELECTOR['requestedAttributeTypes']
-			self.writer = csv.DictWriter(self.f, fieldnames=self.headers, restval="ERROR")
-			self.writer.writeheader()
+            self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
+            self.headers += SELECTOR['requestedAttributeTypes']
+            self.writer = csv.DictWriter(self.f, fieldnames=self.headers, restval="ERROR")
+            self.writer.writeheader()
         for seed_keyword in ideas:
             rows_to_write = ideas[seed_keyword]
             for i in range(len(rows_to_write)):
