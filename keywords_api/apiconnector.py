@@ -122,7 +122,9 @@ class IdeasIterator():
         self.output_file = os.path.join(DATA_DIR, time + '_' +output_file)
 
     def run(self):
+    	self.f = open(self.output_file, 'a')
         for i in range(1, self.iterations+1):
+        	print('Iteration #{0}'.format(i))
             next_seed_keywords = []
             for keyword in self.seed_keywords:
                 selector = IdeaSelector(self.service, keyword)
@@ -132,17 +134,17 @@ class IdeasIterator():
                     next_seed_keywords.append(idea['KEYWORD_TEXT'])
                 self.append_to_csv(ideas, i)
             self.seed_keywords = next_seed_keywords
+        self.f.close()
 
 
     def append_to_csv(self, ideas, iteration):
         """
         Append a "seed_keyword dictionary" to a csv file
         """
-        f = open(self.output_file, 'a')
         if not self.headers:
 			self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
 			self.headers += SELECTOR['requestedAttributeTypes']
-			self.writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
+			self.writer = csv.DictWriter(self.f, fieldnames=self.headers, restval="ERROR")
 			self.writer.writeheader()
         for seed_keyword in ideas:
             rows_to_write = ideas[seed_keyword]
@@ -150,7 +152,7 @@ class IdeasIterator():
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
             self.writer.writerows(rows_to_write)
-        f.close()
+        
 
 if __name__ == '__main__':
 
