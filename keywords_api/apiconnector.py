@@ -163,9 +163,6 @@ if __name__ == '__main__':
     parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
     xargs = parser.parse_args()
 
-    pdb.set_trace()
-
-
     if xargs.language == 'list':
         print LANGUAGE.keys()
         sys.exit()
