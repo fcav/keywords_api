@@ -123,7 +123,7 @@ class IdeasIterator():
         self.all_ideas = []
 
     def worker(self, keyword, i):
-        max_tries = 5
+        max_tries = 10
         ideas = None
         for x in range(max_tries):
             try:
