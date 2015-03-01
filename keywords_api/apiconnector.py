@@ -153,11 +153,11 @@ if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', "--keywords", help="The keywords you want to start with", nargs='+', required=True)
-    parser.add_argument('-i', "--iterations", default = 5, help="Number of iteration. If not given it will defaults to 5")
-    parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration. If not given it will default to 10")
-    parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language. TIf not entered it will default to English")
-    parser.add_argument("-lc", "--location", default = 'UK',  help="Location. If not entered it will default to the choices, type: -ln list. t to UK")
+    parser.add_argument('-k', "--keywords", help="Enter a list of seed keywords", nargs='+', required=True)
+    parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5")
+    parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration; default = 10")
+    parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language; default = English")
+    parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
     args = parser.parse_args()
 
     if args.language == 'list':
