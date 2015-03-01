@@ -1,7 +1,7 @@
 import pdb
 import os
 import unittest
-from keywords_api.apiconnector import ApiConnector, IdeaSelector, IdeasIterator, LocationSelector
+from keywords_api.apiconnector import ApiConnector, IdeaSelector, IdeasIterator, LocationSelector, NonExistantCode
 from keywords_api.config import SELECTOR
 import csv
 
@@ -29,6 +29,10 @@ class TestLocationSelector(unittest.TestCase):
         self.assertIn(['Italy'], location_in_selector)
         self.assertEqual(len(location_in_selector), 2)
 
+    def test_getCode(self):
+        uk_code = self.selector.get_code('UK')
+        self.assertEqual(uk_code, 2826)
+        self.assertRaises(NonExistantCode, self.selector.get_code,'not a place')
 
 class TestIdeaSelector(unittest.TestCase):
 
