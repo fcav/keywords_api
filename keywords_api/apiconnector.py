@@ -4,9 +4,11 @@ import csv
 import argparse
 import sys
 from googleads.adwords import AdWordsClient
-from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR
+from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR, LANGUAGE_SELECTOR
 
 
+class NonExistantCode(Exception):
+	pass
 
 class ApiConnector(object):
 
@@ -17,6 +19,18 @@ class ApiConnector(object):
         self.client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
         self.service = self.client.GetService(self.service_name)
         return self.service
+
+class LanguageSelector():
+
+    def __init__(self):
+        self.service = ApiConnector('ConstantDataService').getIdeaService()
+
+    def get_code(self):
+        languages = self.service.getLanguageCriterion()
+        pdb.set_trace()
+        if not languages:
+            raise 
+        return languages
 
 class LocationSelector():
 
@@ -32,10 +46,8 @@ class LocationSelector():
         self.buildselector(location)
         a = self.service.get(self.selector)
         if not a:
-            raise 
+            raise NonExistantCode('The location taht you have given does not exist')
         return [x.location.id for x in a][0]
-
-
 
 
 class IdeaSelector(object):
@@ -48,18 +60,15 @@ class IdeaSelector(object):
         else:
             raise TypeError('keyword must be a string')
 
-    def _get_language(self, language):
-        return 'Italy'
 
     def buildSelector(self, language='en_US', location=2826, page_size=10):
         self.page_size = page_size
         self.selector = SELECTOR
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
-        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language}]}
+        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': '1004'}]}
         location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'id': location}]}
         paging_param =  {'startIndex': '0','numberResults': str(page_size)}
-        self.selector['searchParameters'] = [keyword_param, location_param]
-        self.selector['localeCode'] = language
+        self.selector['searchParameters'] = [keyword_param, location_param, language_param]
         self.selector['paging'] = paging_param
 
     def getIdeas(self):
@@ -75,6 +84,7 @@ class IdeaSelector(object):
         """
         page = self.service.get(self.selector)
         ideas = page.entries
+        pdb.set_trace()
         clean_ideas = []
         for idea in ideas:
             clean_idea = {}
@@ -133,11 +143,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.language == 'list':
-        for k,w in LANGUAGE.iteritems():
-            print k + ' : ' + w 
+        print LANGUAGE.keys()
         sys.exit()
 
     locationcode = LocationSelector().get_code(args.location)
-    pdb.set_trace()
+    languagecode = LANGUAGE.get(args.language, None)
+
     ideas = IdeasIterator(args.page_size, args.iterations, args.language, locationcode)
     ideas.run(args.keywords)
