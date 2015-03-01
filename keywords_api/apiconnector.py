@@ -109,7 +109,7 @@ class IdeaSelector(object):
 
 class IdeasIterator():
 
-    def __init__(self, seed_keywords, page_size=10, iterations=5, language='English', location='UK', output_file = 'output.csv'):
+    def __init__(self, seed_keywords, page_size=10, iterations=5, language='1000', location=2826, output_file = 'output.csv'):
         self.seed_keywords = seed_keywords
         self.page_size = page_size
         self.iterations = iterations
