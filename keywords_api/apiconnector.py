@@ -1,6 +1,7 @@
 import pdb
 import os
 import csv
+import time
 import argparse
 import sys
 import datetime
@@ -119,17 +120,41 @@ class IdeasIterator():
         now = datetime.datetime.utcnow()
         time = str(now)[:19].replace(' ', '_')
         self.output_file = os.path.join(DATA_DIR, time + '_' +output_file)
+        self.all_ideas = []
+
+    def worker(self, keyword):
+        max_tries = 10
+        ideas = None
+        print 'Getting Ideas for keyword: {0}'.format(keyword)
+        for x in range(max_tries):
+            try:
+                selector = IdeaSelector(self.service, keyword)
+                selector.buildSelector(self.language, self.location, self.page_size)
+                ideas = selector.getIdeas()
+                break
+            except:
+                time.sleep(2)
+        if not ideas:
+            raise NameError('API Call rate exceeded, ideas could not be retrieved')
+            exit(1)
+        self.all_ideas.append(ideas)
 
     def run(self):
     	self.f = open(self.output_file, 'a')
         for i in range(1, self.iterations+1):
-        	print('Iteration #{0}'.format(i))
+            print("Iteration #{0}".format(i))
+            self.all_ideas = []
+            threads = []
             next_seed_keywords = []
             for keyword in self.seed_keywords:
-                selector = IdeaSelector(self.service, keyword)
-                selector.buildSelector(self.language, self.location, self.page_size)
-                ideas = selector.getIdeas()
-                for idea in ideas[keyword]:
+                t = threading.Thread(name=keyword, target=self.worker, args=(keyword,))
+                threads.append(t)
+
+            [x.start() for x in threads]
+            [x.join() for x in threads]
+
+            for ideas in self.all_ideas:
+                for idea in ideas.values()[0]:
                     next_seed_keywords.append(idea['KEYWORD_TEXT'])
                 self.append_to_csv(ideas, i)
             self.seed_keywords = next_seed_keywords
@@ -151,14 +176,14 @@ class IdeasIterator():
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
             self.writer.writerows(rows_to_write)
-        
+
 
 if __name__ == '__main__':
 
     #arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-k', "--keywords", help="Seed keywords - format: -k 'keyword1' 'keyword2' 'keyword3'", nargs='+', type=str, required=True)
-    parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5")
+    parser.add_argument('-i', "--iterations", default = 5, help="Number of iterations; default = 5", type=int)
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration; default = 10")
     parser.add_argument("-ln", "--language", default = 'English', choices = LANGUAGE.keys() + ['list'], help="Language; default = English")
     parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
