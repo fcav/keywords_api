@@ -136,18 +136,21 @@ class IdeasIterator():
         """
         Append a "seed_keyword dictionary" to a csv file
         """
+        f = open(self.output_file, 'a')
+        if not self.headers:
+            self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
+            self.headers += SELECTOR['requestedAttributeTypes']
+            writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
+            writer.writeheader()
+
         for seed_keyword in ideas:
             rows_to_write = ideas[seed_keyword]
             for i in range(len(rows_to_write)):
                 rows_to_write[i].update({'ITERATION': iteration})
                 rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
-            if not self.headers:
-                self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
-                self.headers += SELECTOR['requestedAttributeTypes']
-            with open(self.output_file, 'w') as f:
-                writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
-                writer.writeheader()
-                writer.writerows(rows_to_write)
+
+            writer = csv.DictWriter(f, fieldnames=self.headers, restval="ERROR")
+            writer.writerows(rows_to_write)
 
 if __name__ == '__main__':
 
