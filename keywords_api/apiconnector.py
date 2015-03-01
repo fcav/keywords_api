@@ -1,7 +1,5 @@
 import pdb
 
-import sys
-import os
 import csv
 import argparse
 from googleads.adwords import AdWordsClient
@@ -24,6 +22,7 @@ class IdeaSelector(object):
 
     def __init__(self, service, keyword):
         self.service = service
+        self.page_size = None
         if isinstance(keyword, str):
             self.keyword = keyword
         else:
@@ -33,6 +32,7 @@ class IdeaSelector(object):
         return 'Italy'
 
     def buildSelector(self, language='English', location='en_US', page_size=10):
+        self.page_size = page_size
         self.selector = SELECTOR
         language_code = str(self._get_language(language))
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
@@ -62,7 +62,10 @@ class IdeaSelector(object):
             clean_idea = {}
             for entry in idea.data:
                 if entry.key == "AVERAGE_CPC":
-                    clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                    try:
+                        clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                    except AttributeError:
+                        clean_idea[str(entry.key)] = None
                 else:
                     clean_idea[str(entry.key)] = str(entry.value.value)
             clean_idea['RANK'] = ideas.index(idea)
@@ -81,17 +84,17 @@ class IdeasIterator():
         self.headers = None
         self.service = ApiConnector().getIdeaService()
 
-    def run(self, keywords):
-        this_keywords = keywords
+    def run(self, keyword_list):
+        this_keyword_list = keyword_list
         for i in range(1, self.iterations+1):
-            next_keywords = []
-            for k in this_keywords:
-                new_selector = IdeaSelector(self.service, k)
+            next_keyword_list = []
+            for k in this_keyword_list:
+                new_selector = IdeaSelector(self.selector, k)
                 new_selector.buildSelector(self.language, self.location, self.page_size)
                 this_ideas = new_selector.getIdeas()
-                next_keywords += [x['keyword'] for x in this_ideas.values()]
+                next_keyword_list += [x['keyword'] for x in this_ideas.values()]
                 self.write_in_csv(this_ideas, i)
-            this_keywords = next_keywords
+            this_keyword_list = next_keyword_list
 
     def write_in_csv(self, res_dic, iteration):
         if not self.headers:
