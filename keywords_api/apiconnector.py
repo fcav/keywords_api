@@ -1,7 +1,5 @@
 import pdb
 
-import sys
-import os
 import csv
 import argparse
 from googleads.adwords import AdWordsClient
@@ -24,6 +22,7 @@ class IdeaSelector(object):
 
     def __init__(self, service, keyword):
         self.service = service
+        self.page_size = None
         if isinstance(keyword, str):
             self.keyword = keyword
         else:
@@ -33,6 +32,7 @@ class IdeaSelector(object):
         return 1000
 
     def buildSelector(self, language='English', location='en_US', page_size=10):
+        self.page_size = page_size
         self.selector = SELECTOR
         language_code = str(self._get_language(language))
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
@@ -61,7 +61,10 @@ class IdeaSelector(object):
             clean_idea = {}
             for entry in idea.data:
                 if entry.key == "AVERAGE_CPC":
-                    clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                    try:
+                        clean_idea[str(entry.key)] = str(entry.value.value.microAmount)
+                    except AttributeError:
+                        clean_idea[str(entry.key)] = None
                 else:
                     clean_idea[str(entry.key)] = str(entry.value.value)
             clean_idea['RANK'] = ideas.index(idea)
