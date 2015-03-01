@@ -99,7 +99,10 @@ class IdeaSelector(object):
                     except AttributeError:
                         clean_idea[str(entry.key)] = None
                 else:
-                    clean_idea[str(entry.key)] = str(entry.value.value)
+                    try:
+                        clean_idea[str(entry.key)] = str(entry.value.value)
+                    except AttributeError:
+                        clean_idea[str(entry.key)] = None
             clean_idea['RANK'] = ideas.index(idea)+1
             clean_ideas.append(clean_idea)
         return {self.keyword: clean_ideas}
