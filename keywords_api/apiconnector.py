@@ -2,8 +2,9 @@ import pdb
 
 import csv
 import argparse
+import sys
 from googleads.adwords import AdWordsClient
-from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE_SELECTOR
+from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR
 
 
 
@@ -16,6 +17,25 @@ class ApiConnector(object):
         self.client = AdWordsClient.LoadFromStorage(path=YAML_FILE)
         self.service = self.client.GetService(self.service_name)
         return self.service
+
+class LocationSelector():
+
+    def __init__(self):
+        self.service = ApiConnector('LocationCriterionService').getIdeaService()
+
+    def buildselector(self, location):
+        self.selector = LOCATION_SELECTOR
+        location_param = {'field': 'LocationName', 'operator': 'IN','values': [location]}
+        self.selector['predicates'].append(location_param)
+
+    def get_code(self, location):
+        self.buildselector(location)
+        a = self.service.get(self.selector)
+        if not a:
+            raise 
+        return [x.location.id for x in a][0]
+
+
 
 
 class IdeaSelector(object):
@@ -31,16 +51,15 @@ class IdeaSelector(object):
     def _get_language(self, language):
         return 'Italy'
 
-    def buildSelector(self, language='English', location='en_US', page_size=10):
+    def buildSelector(self, language='en_US', location=2826, page_size=10):
         self.page_size = page_size
         self.selector = SELECTOR
-        language_code = str(self._get_language(language))
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
-        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language_code}]}
-        location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'locationName': language_code}]}
+        language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language}]}
+        location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'id': location}]}
         paging_param =  {'startIndex': '0','numberResults': str(page_size)}
-        self.selector['searchParameters'] = [keyword_param, language_param, location_param]
-        ##self.selector['localeCode'] = location
+        self.selector['searchParameters'] = [keyword_param, location_param]
+        self.selector['localeCode'] = language
         self.selector['paging'] = paging_param
 
     def getIdeas(self):
@@ -55,7 +74,6 @@ class IdeaSelector(object):
             }
         """
         page = self.service.get(self.selector)
-        pdb.set_trace()
         ideas = page.entries
         clean_ideas = []
         for idea in ideas:
@@ -75,7 +93,7 @@ class IdeaSelector(object):
 
 class IdeasIterator():
 
-    def __init__(self, page_size=10, iterations=5, language='English', location='UK'):
+    def __init__(self, page_size=10, iterations=5, language='en_US', location='2826'):
         self.page_size = page_size
         self.iterations = iterations
         self.language = language
@@ -89,7 +107,7 @@ class IdeasIterator():
         for i in range(1, self.iterations+1):
             next_keyword_list = []
             for k in this_keyword_list:
-                new_selector = IdeaSelector(self.selector, k)
+                new_selector = IdeaSelector(self.service, k)
                 new_selector.buildSelector(self.language, self.location, self.page_size)
                 this_ideas = new_selector.getIdeas()
                 next_keyword_list += [x['keyword'] for x in this_ideas.values()]
@@ -110,9 +128,16 @@ if __name__ == '__main__':
     parser.add_argument('-k', "--keywords", help="The keywords you want to start with", nargs='+')
     parser.add_argument('-i', "--iterations", default = 5, help="Number of iteration. If not given it will defaults to 5")
     parser.add_argument("-r", "--page_size", default = 10, help="Number of results per iteration. If not given it will default to 10")
-    parser.add_argument("-ln", "--language", default = 'English', help="Language. If not entered it will default to English")
-    parser.add_argument("-lc", "--location", default = 'en_US', help="Location. If not entered it will default to UK")
+    parser.add_argument("-ln", "--language", default = 'en_US', choices = LANGUAGE.keys() + ['list'], help="Language. TIf not entered it will default to English")
+    parser.add_argument("-lc", "--location", default = 'UK',  help="Location. If not entered it will defaulo see teh choices, type: -ln list. t to UK")
     args = parser.parse_args()
 
-    ideas = IdeasIterator(args.page_size, args.iterations, args.language, args.location)
+    if args.language == 'list':
+        for k,w in LANGUAGE.iteritems():
+            print k + ' : ' + w 
+        sys.exit()
+
+    locationcode = LocationSelector().get_code(args.location)
+    pdb.set_trace()
+    ideas = IdeasIterator(args.page_size, args.iterations, args.language, locationcode)
     ideas.run(args.keywords)
