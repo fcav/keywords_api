@@ -8,9 +8,6 @@ import mock
 
 class TestApiConnector(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_can_get_idea_service(self):
         try:
             con = ApiConnector()
@@ -48,7 +45,6 @@ class TestIdeaSelector(unittest.TestCase):
 
     def test_buildSelector_right_location(self):
         pass
-
 
     def test_getIdeas_returns_dict(self):
         self.assertIsInstance(self.ideas, dict)
