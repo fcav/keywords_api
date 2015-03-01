@@ -80,17 +80,17 @@ class IdeasIterator():
         self.headers = None
         self.selector = None #ApiConnector().getIdeaService()
 
-    def run(self, keywords):
-        this_keywords = keywords
+    def run(self, keyword_list):
+        this_keyword_list = keyword_list
         for i in range(1, self.iterations+1):
-            next_keywords = []
-            for k in this_keywords:
+            next_keyword_list = []
+            for k in this_keyword_list:
                 new_selector = IdeaSelector(self.selector, k)
                 new_selector.buildSelector(self.language, self.location, self.page_size)
                 this_ideas = new_selector.get_ideas()
-                next_keywords += [x['keyword'] for x in this_ideas.values()]
+                next_keyword_list += [x['keyword'] for x in this_ideas.values()]
                 self.write_in_csv(this_ideas, i)
-            this_keywords = next_keywords
+            this_keyword_list = next_keyword_list
 
     def write_in_csv(self, res_dic, iteration):
         if not self.headers:
