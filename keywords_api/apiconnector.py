@@ -125,7 +125,6 @@ class IdeasIterator():
     def worker(self, keyword, i):
         max_tries = 10
         ideas = None
-        print 'Getting Ideas for keyword: {0}'.format(keyword)
         for x in range(max_tries):
             try:
                 selector = IdeaSelector(self.service, keyword)
