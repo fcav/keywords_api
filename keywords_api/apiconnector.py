@@ -3,7 +3,7 @@ import pdb
 import csv
 import argparse
 from googleads.adwords import AdWordsClient
-from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE
+from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE_SELECTOR
 
 
 
@@ -29,7 +29,7 @@ class IdeaSelector(object):
             raise TypeError('keyword must be a string')
 
     def _get_language(self, language):
-        return 1000
+        return 'Italy'
 
     def buildSelector(self, language='English', location='en_US', page_size=10):
         self.page_size = page_size
@@ -37,9 +37,10 @@ class IdeaSelector(object):
         language_code = str(self._get_language(language))
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
         language_param = {'xsi_type': 'LanguageSearchParameter','languages': [{'id': language_code}]}
+        location_param = {'xsi_type': 'LocationSearchParameter','locations': [{'locationName': language_code}]}
         paging_param =  {'startIndex': '0','numberResults': str(page_size)}
-        self.selector['searchParameters'] = [keyword_param, language_param]
-        self.selector['localeCode'] = location
+        self.selector['searchParameters'] = [keyword_param, language_param, location_param]
+        ##self.selector['localeCode'] = location
         self.selector['paging'] = paging_param
 
     def getIdeas(self):
@@ -54,7 +55,7 @@ class IdeaSelector(object):
             }
         """
         page = self.service.get(self.selector)
-
+        pdb.set_trace()
         ideas = page.entries
         clean_ideas = []
         for idea in ideas:
@@ -81,7 +82,7 @@ class IdeasIterator():
         self.location = location
         self.output_path = DATA_DIR
         self.headers = None
-        self.selector = None #ApiConnector().getIdeaService()
+        self.service = ApiConnector().getIdeaService()
 
     def run(self, keyword_list):
         this_keyword_list = keyword_list
@@ -90,7 +91,7 @@ class IdeasIterator():
             for k in this_keyword_list:
                 new_selector = IdeaSelector(self.selector, k)
                 new_selector.buildSelector(self.language, self.location, self.page_size)
-                this_ideas = new_selector.get_ideas()
+                this_ideas = new_selector.getIdeas()
                 next_keyword_list += [x['keyword'] for x in this_ideas.values()]
                 self.write_in_csv(this_ideas, i)
             this_keyword_list = next_keyword_list
@@ -112,7 +113,6 @@ if __name__ == '__main__':
     parser.add_argument("-ln", "--language", default = 'English', help="Language. If not entered it will default to English")
     parser.add_argument("-lc", "--location", default = 'en_US', help="Location. If not entered it will default to UK")
     args = parser.parse_args()
-
 
     ideas = IdeasIterator(args.page_size, args.iterations, args.language, args.location)
     ideas.run(args.keywords)
