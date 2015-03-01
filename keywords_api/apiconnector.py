@@ -1,5 +1,5 @@
 import pdb
-
+import os
 import csv
 import argparse
 import sys
@@ -28,6 +28,8 @@ class LanguageSelector():
 
     def get_code(self):
         languages = self.service.getLanguageCriterion()
+        if not languages:
+            raise
         return languages
 
 class LocationSelector():
@@ -83,9 +85,11 @@ class IdeaSelector(object):
             }
         """
         page = self.service.get(self.selector)
-        ideas = page.entries
-        pdb.set_trace()
         clean_ideas = []
+        try:
+            ideas = page.entries
+        except AttributeError:
+             ideas = []
         for idea in ideas:
             clean_idea = {}
             for entry in idea.data:
@@ -125,13 +129,13 @@ class IdeasIterator():
 
     def append_to_csv(self, iteration):
         """
-        Append an "seed_keyword dictionary" to a csv file
+        Append a "seed_keyword dictionary" to a csv file
         """
         for seed_keyword in self.seed_keywords:
             rows_to_write = self.seed_keywords[seed_keyword]
-            for row in rows_to_write:
-                rows_to_write[row]['ITERATION'] = iteration
-                rows_to_write[row]['SEED_KEYWORD'] = seed_keyword
+            for i in range(len(rows_to_write)):
+                rows_to_write[i].update({'ITERATION': iteration})
+                rows_to_write[i].update({'SEED_KEYWORD': seed_keyword})
             if not self.headers:
                 self.headers = ['ITERATION', 'SEED_KEYWORD', 'RANK']
                 self.headers += SELECTOR['requestedAttributeTypes']
