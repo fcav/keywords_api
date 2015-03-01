@@ -30,7 +30,7 @@ class TestIdeaSelector(unittest.TestCase):
         self.assertIsInstance(self.ideas, dict)
 
     def test_getIdeas_returns_number_of_entries_asked_for(self):
-        self.assertEquals(len(self.ideas[self.test_keyword]), PAGE_SIZE)
+        self.assertEquals(len(self.ideas[self.test_keyword]), self.idea_selector.page_size)
 
     def test_getIdeas_returns_required_attributes(self):
         requested_attrs = SELECTOR['requestedAttributeTypes']
@@ -39,7 +39,7 @@ class TestIdeaSelector(unittest.TestCase):
             # RANK is derived (not requested) so we add that to request list for unittest
             self.assertItemsEqual(idea.keys(), requested_attrs+['RANK'])
         # Check that we get the number of results we wanted from API
-        self.assertEquals(len(self.ideas[self.test_keyword]), PAGE_SIZE)
+        self.assertEquals(len(self.ideas[self.test_keyword]), self.idea_selector.page_size)
 
 class TestIterator(unittest.TestCase):
 
