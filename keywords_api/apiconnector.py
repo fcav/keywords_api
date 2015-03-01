@@ -60,7 +60,7 @@ class IdeaSelector(object):
         else:
             raise TypeError('keyword must be a string')
 
-    def buildSelector(self, language='1000', location=2826, page_size=10):
+    def buildSelector(self, language='1000', location='2826', page_size=10):
         self.page_size = page_size
         self.selector = SELECTOR
         keyword_param = {'xsi_type': 'RelatedToQuerySearchParameter', 'queries': [self.keyword]}
@@ -109,7 +109,7 @@ class IdeaSelector(object):
 
 class IdeasIterator():
 
-    def __init__(self, seed_keywords, page_size=10, iterations=5, language='1000', location=2826, output_file = 'output.csv'):
+    def __init__(self, seed_keywords, page_size=10, iterations=5, language='1000', location='2826', output_file = 'output.csv'):
         self.seed_keywords = seed_keywords
         self.page_size = page_size
         self.iterations = iterations
@@ -163,6 +163,7 @@ if __name__ == '__main__':
     parser.add_argument("-lc", "--location", default = 'UK',  help="Location; default = UK. To list the choices type: -ln list")
     xargs = parser.parse_args()
 
+
     if xargs.language == 'list':
         print LANGUAGE.keys()
         sys.exit()
@@ -171,4 +172,5 @@ if __name__ == '__main__':
     languagecode = str(LANGUAGE[xargs.language])
 
     ideas = IdeasIterator(xargs.keywords, xargs.page_size, xargs.iterations, languagecode, locationcode)
+
     ideas.run()
