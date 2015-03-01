@@ -3,11 +3,10 @@ import os
 import csv
 import argparse
 import sys
-import os
 import datetime
 from googleads.adwords import AdWordsClient
-from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR, LANGUAGE_SELECTOR
-
+from keywords_api.config import SELECTOR, DATA_DIR, YAML_FILE, LANGUAGE, LOCATION_SELECTOR
+import threading
 
 class NonExistantCode(Exception):
 	pass
