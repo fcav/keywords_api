@@ -82,7 +82,6 @@ class TestIterator(unittest.TestCase):
         self.assertTrue(os.path.exists(self.testfile))
 
     def test_writes_headers_to_csv(self):
-        pdb.set_trace()
         self.iter.append_to_csv(self.test_ideas, 1)
         with open(self.testfile) as f:
             reader = csv.reader(f)
