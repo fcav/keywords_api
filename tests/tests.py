@@ -72,7 +72,7 @@ class TestIterator(unittest.TestCase):
         self.test_keywords = ['keyword for unittest']
         #self.num_of_test_ideas = len(self.test_ideas['keyword for unittest'])
         self.test_headers = ['RANK', 'AVERAGE_CPC', 'SEARCH_VOLUME', 'KEYWORD_TEXT', 'COMPETITION', 'ITERATION', 'SEED_KEYWORD']
-        self.iter = IdeasIterator(self.test_keywords)
+        self.iter = IdeasIterator(self.test_keywords, iterations=2)
         self.testfile = self.iter.output_file
         os.remove(self.testfile) if os.path.exists(self.testfile) else None
 
@@ -91,7 +91,6 @@ class TestIterator(unittest.TestCase):
     def test_run_calls_append_to_csv(self):
         self.iter.append_to_csv = mock.Mock()
         self.iter.run()
-        pdb.set_trace()
         self.iter.append_to_csv.assert_called()
 
 
